@@ -13,11 +13,10 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  // does it need an argument?
+  // does it need an argument? Apparently not
   socket.on('logon', function() {
     userIds.push(socket.id);
-    // Send a response to client or other users:
-    io.emit('logon', socket.id);
+    // Send a response to client or other users (update list of all online users):
     io.emit('ids', userIds);
   });
 
@@ -27,6 +26,7 @@ io.on('connection', function(socket){
       if (games[i].id == move.gameId) {
         if (move.player == 1) {
           games[i].vals[move.clickedCell] = 'X';
+          // move.player = 2;
         } else {
           games[i].vals[move.clickedCell] = 'o';
         }
@@ -36,8 +36,6 @@ io.on('connection', function(socket){
   });
 
   socket.on('invite', function(inv) {
-    // console.log(inv);
-    console.log(inv.from == socket.id);
     socket.broadcast.to(inv.to).emit('msg', inv.from);
   });
 
@@ -57,12 +55,12 @@ io.on('connection', function(socket){
     numOfGames ++;
   });
 
+  // Update list of online users:
   socket.on('disconnect', function(){
     console.log('user disconnected', socket.id);
     userIds.splice(userIds.indexOf(socket.id), 1);
     io.emit('ids', userIds);
   });
-
 
 });
 

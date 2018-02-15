@@ -9,7 +9,7 @@
 <body>
   <h1>Tic tac toe</h1>
 
-  <div id="usersOnline"></div><hr>
+  <!-- <div id="usersOnline"></div><hr> -->
   <div id="otherUsers"></div><hr>
   <div id="log"></div><hr>
   <div id="moving">
@@ -20,6 +20,7 @@
   </div>
   <div id="game"></div>
 
+  <!-- Styles: -->
   <style media="screen">
   td {
     height: 100px;
@@ -28,17 +29,20 @@
   }
   </style>
 
+
+  <!-- Scripts: -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script>
 
+  // Global variables:
   var users = [];
   var playerToMove = false;
   var clickedCell = -1;
   var gameId = -1;
   var playerNum = 0;
 
-
+  // jQuery's .ready():
   $(function () {
     var socket = io();
 
@@ -46,7 +50,7 @@
     $('#waiting').hide();
 
     // Emit to the server when user connects. Can also pass it a callback function:
-    socket.emit('logon', 1)
+    socket.emit('logon')
 
     // --Click handlers--
 
@@ -147,30 +151,26 @@
 
     // Receive invite:
     socket.on('msg', function(from) {
-      // console.log(from);
       $('#log').append(from + ' would like to play a game with you!');
       var play = '<button class="play" data-from="' + from + '" data-to="' + socket.id + '">Play</button>';
       $('#log').append(play);
     });
 
-    // Handle event called 'logon' coming from the server:
-    socket.on('logon', function(n) {
-      console.log('my id is: ', n);
-    });
-
+    // Get list of all online users:
     socket.on('ids', function(ids) {
       console.log(ids, socket.id);
       users = ids;
-      $('#usersOnline').empty();
+      // $('#usersOnline').empty();
       $('#otherUsers').empty();
 
       for (var i=0; i < ids.length; i++) {
-        $('#usersOnline').append($('<p>').text(ids[i]));
+        // $('#usersOnline').append($('<p>').text(ids[i]));
 
         if (socket.id !== ids[i]) {
           $('#otherUsers').append($('<span>').text(ids[i]));
           var btn = '<button class="sub" data-to="' + ids[i] + '" data-from="' + socket.id + '">Send</button>';
           $('#otherUsers').append($('<span>').append(btn));
+          $('#otherUsers').append($('<span>').append('<br>'));
         }
       }
     });
