@@ -136,8 +136,8 @@
       console.log(move);
       if (socket.id == move.p2) {
         console.log('yep');
-        // why isn't this working?
-        $('td[data-id=" ' + 2 + '"]').append('X');
+        // why isn't this working? Because of the extra space perhaps??? Something tells me it was!
+        $('td[data-id="' + 2 + '"]').append('X');
       }
     });
 
