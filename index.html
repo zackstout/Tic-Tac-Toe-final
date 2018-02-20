@@ -10,8 +10,8 @@
   <h1>Tic tac toe</h1>
 
   <!-- <div id="usersOnline"></div><hr> -->
-  <div id="otherUsers"></div><hr>
-  <div id="log"></div><hr>
+  <div id="otherUsers">Other users online:</div><br><hr>
+  <div id="log">Messages:<br></div><hr>
   <div id="moving">
     Your move!
   </div>
@@ -26,6 +26,7 @@
     height: 100px;
     width: 100px;
     background-color: tomato;
+    text-align: center;
   }
   </style>
 
@@ -40,7 +41,8 @@
   var playerToMove = false;
   var clickedCell = -1;
   var gameId = -1;
-  var playerNum = 0;
+
+  var currentGame;
 
   // jQuery's .ready():
   $(function () {
@@ -57,8 +59,15 @@
     // Choose move:
     $('#game').on('click', 'td', (event) => {
       event.preventDefault();
+      // console.log(playerNum); // it's 1 or 0:
       clickedCell = $(event.currentTarget).data('id');
-      if (playerNum == 1) {
+
+      // Clear all other cells:
+      for (var i=0; i < 9; i++) {
+        $("td[data-id='" + i + "']").empty();
+      }
+
+      if (currentGame.p1 == socket.id) {
         $(event.currentTarget).text('X');
       } else {
         $(event.currentTarget).text('o');
@@ -72,10 +81,12 @@
         playerToMove = false;
         $('#waiting').show();
         $('#moving').hide();
+        $('.move').hide();
+
         socket.emit('makeMove', {
           clickedCell: clickedCell,
           gameId: gameId,
-          player: playerNum
+          player: socket.id
         });
       }
 
@@ -92,12 +103,6 @@
       } else {
         p2 = $(event.currentTarget).data('to');
         p1 = $(event.currentTarget).data('from');
-      }
-
-      if (socket.id == p1) {
-        playerNum = 1;
-      } else if (socket.id == p2) {
-        playerNum = 2;
       }
 
       console.log(p1, p2, socket.id);
@@ -125,27 +130,33 @@
 
 
 
-
-
-
     // --Socket listeners--
 
     socket.on('makeMove', function(move) {
       console.log(move);
+      if (socket.id == move.p2) {
+        console.log('yep');
+        // why isn't this working?
+        $('td[data-id=" ' + 2 + '"]').append('X');
+      }
     });
 
     // Draw both grids:
     socket.on('startGame', function(game) {
-      drawTable();
       gameId = game.id;
+      console.log("Game: ", game);
+      currentGame = game;
 
       if (socket.id == game.p1) {
-        $('#log').append("You are player one!");
+        $('#log').append("<p>You are player one!</p>");
+        drawTable();
         playerToMove = true;
         $('#moving').show();
-      } else {
-        $('#log').append("you are player two :(");
+      } else if (socket.id == game.p2) {
+        $('#log').append("<p>you are player two :(</p>");
+        drawTable();
         $('#waiting').show();
+        $('.move').hide();
       }
     });
 
@@ -160,12 +171,10 @@
     socket.on('ids', function(ids) {
       console.log(ids, socket.id);
       users = ids;
-      // $('#usersOnline').empty();
       $('#otherUsers').empty();
+      $('#otherUsers').append('Other users online: <br><br>');
 
       for (var i=0; i < ids.length; i++) {
-        // $('#usersOnline').append($('<p>').text(ids[i]));
-
         if (socket.id !== ids[i]) {
           $('#otherUsers').append($('<span>').text(ids[i]));
           var btn = '<button class="sub" data-to="' + ids[i] + '" data-from="' + socket.id + '">Send</button>';

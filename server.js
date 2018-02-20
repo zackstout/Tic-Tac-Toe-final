@@ -23,14 +23,15 @@ io.on('connection', function(socket){
   socket.on('makeMove', function(move) {
     console.log(move);
     for (var i=0; i < numOfGames; i++) {
-      if (games[i].id == move.gameId) {
-        if (move.player == 1) {
-          games[i].vals[move.clickedCell] = 'X';
+      var game = games[i];
+      if (game.id == move.gameId) {
+        if (move.player == game.p1) {
+          game.vals[move.clickedCell] = 'X';
           // move.player = 2;
         } else {
-          games[i].vals[move.clickedCell] = 'o';
+          game.vals[move.clickedCell] = 'o';
         }
-        io.emit('makeMove', games[i]);
+        io.emit('makeMove', game);
       }
     }
   });
@@ -57,7 +58,7 @@ io.on('connection', function(socket){
 
   // Update list of online users:
   socket.on('disconnect', function(){
-    console.log('user disconnected', socket.id);
+    // console.log('user disconnected', socket.id);
     userIds.splice(userIds.indexOf(socket.id), 1);
     io.emit('ids', userIds);
   });
