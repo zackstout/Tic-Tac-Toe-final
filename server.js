@@ -24,13 +24,15 @@ io.on('connection', function(socket){
     console.log(move);
     for (var i=0; i < numOfGames; i++) {
       var game = games[i];
+      // match the move with its game (if there are multiple games occurring):
       if (game.id == move.gameId) {
         if (move.player == game.p1) {
           game.vals[move.clickedCell] = 'X';
-          // move.player = 2;
         } else {
           game.vals[move.clickedCell] = 'o';
         }
+        // keep track of whose move it is (will be true iff p1 is to move):
+        game.mover = !game.mover;
         io.emit('makeMove', game);
       }
     }
@@ -48,7 +50,7 @@ io.on('connection', function(socket){
       p1: p1,
       p2: p2,
       vals: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      mover: p1
+      mover: true
     };
     games.push(game);
     io.emit('startGame', game);

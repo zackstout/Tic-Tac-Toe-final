@@ -56,6 +56,8 @@
 
     // --Click handlers--
 
+
+
     // Choose move:
     $('#game').on('click', 'td', (event) => {
       event.preventDefault();
@@ -63,6 +65,7 @@
       clickedCell = $(event.currentTarget).data('id');
 
       // Clear all other cells:
+      // Oh but this only works the first time -- we'll have to look at the game.vals array:
       for (var i=0; i < 9; i++) {
         $("td[data-id='" + i + "']").empty();
       }
@@ -77,7 +80,7 @@
     // Submit move:
     $('#game').on('click', '.move', (event) => {
       event.preventDefault();
-      if (playerToMove) {
+      // if (playerToMove) {
         playerToMove = false;
         $('#waiting').show();
         $('#moving').hide();
@@ -88,7 +91,7 @@
           gameId: gameId,
           player: socket.id
         });
-      }
+      // }
 
     });
 
@@ -134,11 +137,30 @@
 
     socket.on('makeMove', function(move) {
       console.log(move);
-      if (socket.id == move.p2) {
-        console.log('yep');
-        // why isn't this working? Because of the extra space perhaps??? Something tells me it was!
-        $('td[data-id="' + 2 + '"]').append('X');
+      // check whose move it is. First block means p1 to move:
+      if (move.mover) {
+        if (socket.id == move.p1) {
+          console.log('allo p1');
+          $('td[data-id="' + 2 + '"]').append('o');
+
+          $('#waiting').toggle();
+          $('.move').toggle();
+          $('#moving').toggle();
+
+        }
+      } else {
+        if (socket.id == move.p2) {
+          console.log('yep');
+          // why isn't this working? Because of the extra space perhaps??? Something tells me it was!
+          $('td[data-id="' + 2 + '"]').append('X');
+
+          $('#waiting').toggle();
+          $('.move').toggle();
+          $('#moving').toggle();
+
+        }
       }
+
     });
 
     // Draw both grids:
