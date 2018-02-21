@@ -67,9 +67,19 @@
       // Clear all other cells:
       // Oh but this only works the first time -- we'll have to look at the game.vals array:
       for (var i=0; i < 9; i++) {
-        $("td[data-id='" + i + "']").empty();
+        // $("td[data-id='" + i + "']").empty();
+        if (currentGame.vals[i] == 'X') {
+          $("td[data-id='" + i + "']").text('X');
+        } else if (currentGame.vals[i] == 'o') {
+          $("td[data-id='" + i + "']").text('o');
+        } else {
+          $("td[data-id='" + i + "']").text('');
+        }
       }
 
+      console.log(currentGame);
+
+      // before this we'll have to check to make sure the cell is empty:
       if (currentGame.p1 == socket.id) {
         $(event.currentTarget).text('X');
       } else {
@@ -137,11 +147,15 @@
 
     socket.on('makeMove', function(move) {
       console.log(move);
+      // keep track of the game-state globally:
+      currentGame = move;
       // check whose move it is. First block means p1 to move:
       if (move.mover) {
         if (socket.id == move.p1) {
           console.log('allo p1');
-          $('td[data-id="' + 2 + '"]').append('o');
+
+          // how to fix this?:
+          $('td[data-id="' + move.justMoved + '"]').append('o');
 
           $('#waiting').toggle();
           $('.move').toggle();
@@ -152,7 +166,7 @@
         if (socket.id == move.p2) {
           console.log('yep');
           // why isn't this working? Because of the extra space perhaps??? Something tells me it was!
-          $('td[data-id="' + 2 + '"]').append('X');
+          $('td[data-id="' + move.justMoved + '"]').append('X');
 
           $('#waiting').toggle();
           $('.move').toggle();

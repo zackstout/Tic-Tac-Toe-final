@@ -33,6 +33,8 @@ io.on('connection', function(socket){
         }
         // keep track of whose move it is (will be true iff p1 is to move):
         game.mover = !game.mover;
+        // remember which one was just clicked for drawing to the other client:
+        game.justMoved = move.clickedCell;
         io.emit('makeMove', game);
       }
     }
