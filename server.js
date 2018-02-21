@@ -12,6 +12,39 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+function checkForWin(arr) {
+  console.log('checkin', arr);
+  // check rows (the last condition ensures the cell doesn't contain 0, i.e. is 'X' or 'o'):
+  if (arr[0] == arr[1] && arr[1] == arr[2] && arr[0]) {
+    return true;
+  }
+  if (arr[3] == arr[4] && arr[4] == arr[5] && arr[3]) {
+    return true;
+  }
+  if (arr[6] == arr[7] && arr[7] == arr[8] && arr[6]) {
+    return true;
+  }
+  // check columns:
+  if (arr[0] == arr[3] && arr[3] == arr[6] && arr[0]) {
+    return true;
+  }
+  if (arr[1] == arr[4] && arr[4] == arr[7] && arr[1]) {
+    return true;
+  }
+  if (arr[2] == arr[5] && arr[5] == arr[8] && arr[2]) {
+    return true;
+  }
+  // check diagonals:
+  if (arr[0] == arr[4] && arr[4] == arr[8] && arr[0]) {
+    return true;
+  }
+  if (arr[2] == arr[4] && arr[4] == arr[6] && arr[2]) {
+    return true;
+  }
+  // game still in progress:
+  return false;
+}
+
 io.on('connection', function(socket){
   // does it need an argument? Apparently not
   socket.on('logon', function() {
@@ -31,6 +64,8 @@ io.on('connection', function(socket){
         } else {
           game.vals[move.clickedCell] = 'o';
         }
+        // console.log(game);
+        console.log("Is the game over: ", checkForWin(game.vals));
         // keep track of whose move it is (will be true iff p1 is to move):
         game.mover = !game.mover;
         // remember which one was just clicked for drawing to the other client:

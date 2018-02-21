@@ -153,25 +153,20 @@
       if (move.mover) {
         if (socket.id == move.p1) {
           console.log('allo p1');
-
-          // how to fix this?:
           $('td[data-id="' + move.justMoved + '"]').append('o');
 
           $('#waiting').toggle();
           $('.move').toggle();
           $('#moving').toggle();
-
         }
       } else {
         if (socket.id == move.p2) {
           console.log('yep');
-          // why isn't this working? Because of the extra space perhaps??? Something tells me it was!
           $('td[data-id="' + move.justMoved + '"]').append('X');
 
           $('#waiting').toggle();
           $('.move').toggle();
           $('#moving').toggle();
-
         }
       }
 
