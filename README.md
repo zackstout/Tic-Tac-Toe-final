@@ -1,5 +1,5 @@
 # Tic Tac Toe with Socket.io
-Learning Socket.io by making a real-time 1-v-1 game.
+Learning Socket.io by making a real-time 1-v-1 game. Check out the [live demo](https://warm-crag-39385.herokuapp.com/). Open it in a few tabs to simulate an interaction between users.
 
 ## Built With:
 - Socket.io
